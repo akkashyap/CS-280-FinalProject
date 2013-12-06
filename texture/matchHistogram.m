@@ -1,8 +1,22 @@
-function [ out_im ] = matchHistogram( im1, im2 )
+function [ out_im ] = matchHistogram( imnom, imnom2 )
 % im1 should be noise and im2 should be the texture
+
+
+imnom_min = double(min(imnom(:)));
+imnom2_min = double(min(imnom2(:)));
+
+imnom_max = double(max(imnom(:)));
+imnom2_max = double(max(imnom2(:)));
+
+
+im1 = floor(255.*(double(imnom) - ones(size(imnom)).*imnom_min)./(imnom_max - imnom_min));
+im2 = floor(255.*(double(imnom2) - ones(size(imnom2)).*imnom2_min)./(imnom2_max - imnom2_min));
+
+
+
 out_im = zeros(size(im1));
 
-im1_cdf = makeCDF(im1);
+ im1_cdf = makeCDF(im1);
 im2_cdf = makeCDF(im2);
 
 [rows, cols] = size(out_im);
@@ -11,6 +25,10 @@ for i = 1:rows
         out_im(i,j) = InvCDFLookup(im2_cdf, CDFLookup(im1_cdf, im1(i,j)+1)) - 1;
     end
 end
+
+out_im = out_im./(255);  
+out_im = out_im.*(imnom_max - imnom_min) + imnom_min;
+
 end
 
 function [cdf] = makeCDF(im)
@@ -59,6 +77,7 @@ function [histo] = myHist(im)
 im = reshape(im, 1, []);
 im = floor(im);
 histo = zeros(1,256);
+
 for i = 1:256
     histo(i) = sum(im == i-1); 
 end

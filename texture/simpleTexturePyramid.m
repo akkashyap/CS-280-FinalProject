@@ -9,7 +9,7 @@ function [ pyramid ] = simpleTexturePyramid( image, levels )
         pyramid{i} = lPyramid{i} + impyramid(gPyramid{i+1}, 'expand');
     end
 
-    pyramid{levels} = gPyramid{levels};
+    pyramid{levels} = lPyramid{levels};
 
 end
 
